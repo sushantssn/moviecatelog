@@ -1,26 +1,51 @@
 package com.movie.catelog.demo.controller;
 
 import com.movie.catelog.demo.pojo.CatelogItem;
+import com.movie.catelog.demo.pojo.Movie;
 import com.movie.catelog.demo.pojo.Rating;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.sql.ClientInfoStatus;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/catelog")
 public class MovieCatelogController {
 
 
+    @Autowired
+    WebClient.Builder webClientBuilder ;
+    @Autowired
+    RestTemplate restTemplate ;
     @RequestMapping ("/{userId}")
     public List<CatelogItem> getMovies(@PathVariable String userId){
 
-        //get the ratings of the movies
+        //get all the ratings of the movies
         List<Rating> ratings = Arrays.asList(new Rating("12234",3),
                 new Rating("12345",5));
-        return Collections.singletonList(new CatelogItem("Laagan","Cricket Movie",5));
+        //then for each movie id call the movieinfo service to get movie details
+       return ratings.stream().map(rating -> {
+           //old way
+          //Movie movie =  restTemplate.getForObject("http://localhost:8082/movies/"+rating.getMovieId(), Movie.class);
+
+           //new way
+           Movie movie = webClientBuilder.build()
+                   .get()
+                   .uri("http://localhost:8082/movies/"+rating.getMovieId())
+                   .retrieve()
+                   .bodyToMono(Movie.class)
+                   .block();
+          return new CatelogItem(movie.getMovieId(), "Test",4);
+        }).collect(Collectors.toList());
+
+        //Put them all together
+
+        //return Collections.singletonList(new CatelogItem("Laagan","Cricket Movie",5));
     }
 
     @RequestMapping ("/foo")
