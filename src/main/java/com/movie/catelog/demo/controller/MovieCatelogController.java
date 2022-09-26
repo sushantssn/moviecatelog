@@ -31,16 +31,16 @@ public class MovieCatelogController {
         //then for each movie id call the movieinfo service to get movie details
        return ratings.stream().map(rating -> {
            //old way
-          //Movie movie =  restTemplate.getForObject("http://localhost:8082/movies/"+rating.getMovieId(), Movie.class);
+          //Movie movie =  restTemplate.getForObject("http://localhost:8083/movies/"+rating.getMovieId(), Movie.class);
 
            //new way
            Movie movie = webClientBuilder.build()
                    .get()
-                   .uri("http://localhost:8082/movies/"+rating.getMovieId())
+                   .uri("http://movie-info-service/movies/"+rating.getMovieId())
                    .retrieve()
                    .bodyToMono(Movie.class)
                    .block();
-          return new CatelogItem(movie.getMovieId(), "Test",4);
+          return new CatelogItem(movie.getMovieId(), movie.getDesc(), 4);
         }).collect(Collectors.toList());
 
         //Put them all together
