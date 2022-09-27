@@ -11,7 +11,7 @@ public class CatelogItem {
         this.desc = desc;
         this.rating = rating;
     }
-
+    public CatelogItem(){}
 
     public String getName() {
         return name;

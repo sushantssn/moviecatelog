@@ -17,6 +17,7 @@ public class MovieCatelogApplication {
 		return  new RestTemplate();
 	}
 	@Bean
+	@LoadBalanced
 	public WebClient.Builder getWebClient(){
 		return  WebClient.builder();
 	}

@@ -9,7 +9,7 @@ public class Rating {
         this.movieId = movieId;
         this.rating = rating;
     }
-
+    public Rating(){}
     public void setMovieId(String movieId) {
         this.movieId = movieId;
     }
